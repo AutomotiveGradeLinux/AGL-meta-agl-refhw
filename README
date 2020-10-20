@@ -1,0 +1,71 @@
+This README file contains information on the contents of the meta-agl-refhw-gen3
+layer which provides the reference hardware support for AGL environment.
+
+Dependency
+==========
+
+- Yocto layers of AGL Happy Halibut.
+  Especially depends on meta-renesas-rcar-gen3.
+
+
+Build Instructions
+==================
+
+  I. Adding the meta-agl-refhw-gen3 layer to your AGL environment
+ II. Build agl-demo-platform by using meta-agl-refhw-gen3
+III. Update firmware.
+ IV. Notes
+
+
+I. Adding the meta-agl-refhw-gen3 layer to your AGL environment
+==============================================================
+
+You can add this layer to your AGL HH environemnt as following:
+
+1. Put meta-refhw folder into the "$AGL_TOP/bsp" directory where AGL BSP layers
+   like meta-renesas-rcar-gen3/ are placed.
+   # See "Downloading AGL Software" in AGL developper site.
+
+2. Put refhw-h3 folder into the meta-agl/templates/machine where other machine
+   configuration files are placed.
+
+II. Build for Reference Hardware
+================================
+You should follow the instructions in "Building for Supported Renesas Boards"
+section in AGL developper site to build images for reference hardware.
+
+The modification needed is to set machine to "refhw-h3" when execute
+aglsetup.sh (parameter of "-m" option).
+
+	$ cd $AGL_TOP
+	$ source meta-agl/scripts/aglsetup.sh -m refhw-h3 -b build \
+	  agl-devel agl-demo agl-netboot agl-appfw-smack agl-localdev
+
+The "real" MACHINE in the internal building is set to "salvator-x" so that we
+can divert the configurations defined for salvator-x. While, the DTB file used
+by reference hardware is "r8a7795-refhw.dtb". so the settings in u-boot is
+expected as following (in case of booting from the Micro SD card in SD#0):
+
+	=> setenv bootargs 'console=ttySC0,115200 root=/dev/mmcblk1p1 rootwait ro rootfstype=ext4'
+	=> setenv bootcmd 'run load_ker; run load_dtb; booti 0x48080000 - 0x48000000'
+	=> setenv load_dtb 'ext4load mmc 0:1 0x48000000 /boot/r8a7795-refhw.dtb'
+	=> setenv load_ker 'ext4load mmc 0:1 0x48080000 /boot/Image'
+	=> saveenv
+	
+	=> printenv
+	...
+	bootargs=console=ttySC0,115200 root=/dev/mmcblk1p1 rootwait ro rootfstype=ext4
+	bootcmd=run load_ker; run load_dtb; booti 0x48080000 - 0x48000000
+	load_dtb=ext4load mmc 0:1 0x48000000 /boot/r8a7795-refhw.dtb
+	load_ker=ext4load mmc 0:1 0x48080000 /boot/Image
+	..
+
+III. Update firmware.
+=====================
+Please refer to meta-agl-refhw-gen3/docs/ReferenceHW_Rcar_gen3.md for detail.
+
+IV. Notes
+==========
+1.  SD#1 is not supported.
+2.  There are suspicious HDMI0/1 interrupts detected and disabled forcely by
+    the kernel during boot. The reason is under investigation.
