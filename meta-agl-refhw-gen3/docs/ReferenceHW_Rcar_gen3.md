@@ -1,4 +1,4 @@
-# Reference Hardware Board
+﻿# Reference Hardware Board
 
 - [About](#about)
 - [Difference to Salvator-XS When Flashing Firmware](#difference-to-salvator-xs-when-flashing-firmware)
@@ -41,6 +41,56 @@ using serial download.
 
 Output the following image.
 ./AArch64_output/AArch64_Flash_writer_SCIF_DUMMY_CERT_E6300400_salvator-x.mot
+
+## How to build the Firmware
+
+1. In a temporary working directory, clone poky the poky repository and check out the dunfell branch:
+```
+	git clone git://git.yoctoproject.org/poky
+	cd poky
+	git checkout dunfell
+	..
+```
+2.  Clone the Renesas BSP and it's dependent layers:
+```
+	git clone https://github.com/renesas-rcar/meta-renesas
+	cd meta-renesas
+	git checkout dunfell-dev-4.14
+	cd ..
+	git clone git://git.openembedded.org/meta-openembedded
+	cd meta-openembedded
+	git checkout dunfell
+	cd ..
+```
+3. Clone the reference hardware BSP layer:
+```
+	git clone https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-refhw
+```
+4. Create a build environment:
+```
+	. ./poky/oe-init-build-env build
+```
+5. Add the layers to `conf/bblayers.conf`, the `BBLAYERS` variable definition should look like:
+```
+	BBLAYERS ?= " \
+	  /home/user/workdir/poky/meta \
+	  /home/user/workdir/poky/meta-poky \
+	  /home/user/poky/meta-yocto-bsp \
+	  /home/user/workdir/meta-openembedded/meta-oe \
+	  /home/user/workdir/meta-openembedded/meta-python \
+	  /home/user/workdir/meta-renesas/meta-rcar-gen3 \
+	  /home/user/workdir/meta-agl-refhw/meta-agl-refhw-gen3 \
+	  "
+```
+6. Add the machine setting to `conf/local.conf`, for example:
+```
+	echo MACHINE=agl-refhw-h3 >> conf/local.conf
+```
+7. Build the firmware:
+```
+	bitbake arm-trusted-firmware u-boot
+```
+8. Afterwards, the firmware files will be in the directory `tmp/deploy/images/agl-refhw-h3`.
 
 ## How to Flash Firmware
 
@@ -129,10 +179,10 @@ Output the following image.
   Name					| Load address		| eMMC partition 	| Flash address		| Description
   --------------------------------------|-----------------------|-----------------------|-----------------------|-----------------------------
   bootparam_sa0-4x2g.srec		| H'E6320000		| 1			| H'000000		| Boot parameter
-  bl2-salvator-x-4x2g.srec		| H'E6304000		| 1			| H'00001E		| bl2 loader
+  bl2-agl-refhw-h3-4x2g.srec		| H'E6304000		| 1			| H'00001E		| bl2 loader
   cert_header_sa6-4x2g.srec		| H'E6320000		| 1			| H'000180		| Certification
-  bl31-salvator-x-4x2g.srec		| H'44000000		| 1			| H'000200		| bl3 loader
-  tee-salvator-x.srec			| H'44100000		| 1			| H'001000		| OP-Tee
+  bl31-agl-refhw-h3-4x2g.srec		| H'44000000		| 1			| H'000200		| bl3 loader
+  tee-agl-refhw-h3.srec			| H'44100000		| 1			| H'001000		| OP-Tee
   u-boot-elf-salvator-xs-4x2g.srec	| H'50000000		| 2			| H'000000		| U-boot
 
   You can find these firmwares in the AGL build directory $AGL_TOP/build/tmp/deploy/images/salvator-x

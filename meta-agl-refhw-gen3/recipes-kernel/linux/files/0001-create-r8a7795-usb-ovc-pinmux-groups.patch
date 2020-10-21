@@ -1,0 +1,410 @@
+Create r8a7795 USB OVC pin groups
+
+Split the r8a7795 USB pin groups to create separate groups for the
+OVC pins.  This is required for the AGL reference hardware boards,
+which use some of the OVC pins in other pinmux modes.
+
+Upstream-Status: pending    
+ 
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+
+---
+ .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |  2 +-
+ arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  2 +-
+ .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |  4 +-
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi   |  6 +-
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           |  2 +-
+ arch/arm64/boot/dts/renesas/ulcb.dtsi              |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           | 75 +++++++++++++++++-----
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 75 +++++++++++++++++-----
+ 8 files changed, 129 insertions(+), 39 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+index 5c3935ef4fb9..07d3f03274e3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
+@@ -202,7 +202,7 @@
+ 
+ &pfc {
+ 	usb2_pins: usb2 {
+-		groups = "usb2";
++		groups = "usb2", "usb2_ovc";
+ 		function = "usb2";
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+index 6928afbd8e06..9c229b1bbb59 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
+@@ -202,7 +202,7 @@
+ 
+ &pfc {
+ 	usb2_pins: usb2 {
+-		groups = "usb2";
++		groups = "usb2", "usb2_ovc";
+ 		function = "usb2";
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+index 498f78875dbd..abd1d480292e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
+@@ -217,7 +217,7 @@
+ 
+ &pfc {
+ 	usb2_pins: usb2 {
+-		groups = "usb2";
++		groups = "usb2", "usb2_ovc";
+ 		function = "usb2";
+ 	};
+ 
+@@ -234,7 +234,7 @@
+ 	 *	- Connect GP6_{04,21} to ADV7842.
+ 	 */
+ 	usb2_ch3_pins: usb2_ch3 {
+-		groups = "usb2_ch3";
++		groups = "usb2_ch3", "usb2_ch3_ovc";
+ 		function = "usb2_ch3";
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 878ed7caca77..a9e2d0a02fe1 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -690,13 +690,13 @@
+ 	};
+ 
+ 	usb0_pins: usb0 {
+-		groups = "usb0";
++		groups = "usb0", "usb0_ovc";
+ 		function = "usb0";
+ 	};
+ 
+ 	usb1_pins: usb1 {
+ 		mux {
+-			groups = "usb1";
++			groups = "usb1", "usb1_ovc";
+ 			function = "usb1";
+ 		};
+ 
+@@ -712,7 +712,7 @@
+ 	};
+ 
+ 	usb30_pins: usb30 {
+-		groups = "usb30";
++		groups = "usb30", "usb30_ovc";
+ 		function = "usb30";
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 1b316d79df88..9d44b5ef4f63 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -170,7 +170,7 @@
+ 	};
+ 
+ 	usb0_pins: usb0 {
+-		groups = "usb0";
++		groups = "usb0", "usb0_ovc";
+ 		function = "usb0";
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index b60fd45f0a17..6f054ab8e611 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -366,7 +366,7 @@
+ 	};
+ 
+ 	usb1_pins: usb1 {
+-		groups = "usb1";
++		groups = "usb1", "usb1_ovc";
+ 		function = "usb1";
+ 	};
+ };
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+index 9f302f60297f..55f99fe4d8ac 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
+@@ -3822,44 +3822,79 @@ static const unsigned int tmu_tclk2_b_mux[] = {
+ 
+ /* - USB0 ------------------------------------------------------------------- */
+ static const unsigned int usb0_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
++	/* PWEN */
++	RCAR_GP_PIN(6, 24),
+ };
+ static const unsigned int usb0_mux[] = {
+-	USB0_PWEN_MARK, USB0_OVC_MARK,
++	USB0_PWEN_MARK,
++};
++static const unsigned int usb0_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 25),
++};
++static const unsigned int usb0_ovc_mux[] = {
++	USB0_OVC_MARK,
+ };
+ /* - USB1 ------------------------------------------------------------------- */
+ static const unsigned int usb1_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
++	/* PWEN */
++	RCAR_GP_PIN(6, 26),
+ };
+ static const unsigned int usb1_mux[] = {
+-	USB1_PWEN_MARK, USB1_OVC_MARK,
++	USB1_PWEN_MARK,
++};
++static const unsigned int usb1_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 27),
++};
++static const unsigned int usb1_ovc_mux[] = {
++	USB1_OVC_MARK,
+ };
+ /* - USB2 ------------------------------------------------------------------- */
+ static const unsigned int usb2_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
++	/* PWEN */
++	RCAR_GP_PIN(6, 14),
+ };
+ static const unsigned int usb2_mux[] = {
+-	USB2_PWEN_MARK, USB2_OVC_MARK,
++	USB2_PWEN_MARK,
++};
++static const unsigned int usb2_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 15),
++};
++static const unsigned int usb2_ovc_mux[] = {
++	USB2_OVC_MARK,
+ };
+ 
+ /* - USB30 ------------------------------------------------------------------ */
+ static const unsigned int usb30_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
++	/* PWEN */
++	RCAR_GP_PIN(6, 28),
+ };
+ static const unsigned int usb30_mux[] = {
+-	USB30_PWEN_MARK, USB30_OVC_MARK,
++	USB30_PWEN_MARK,
++};
++static const unsigned int usb30_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 29),
++};
++static const unsigned int usb30_ovc_mux[] = {
++	USB30_OVC_MARK,
+ };
+ /* - USB31 ------------------------------------------------------------------ */
+ static const unsigned int usb31_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
++	/* PWEN */
++	RCAR_GP_PIN(6, 30),
+ };
+ static const unsigned int usb31_mux[] = {
+-	USB31_PWEN_MARK, USB31_OVC_MARK,
++	USB31_PWEN_MARK,
++};
++static const unsigned int usb31_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 31),
++};
++static const unsigned int usb31_ovc_mux[] = {
++	USB31_OVC_MARK,
+ };
+ 
+ /* - VIN4 ------------------------------------------------------------------- */
+@@ -4486,10 +4521,15 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(tmu_tclk2_a),
+ 	SH_PFC_PIN_GROUP(tmu_tclk2_b),
+ 	SH_PFC_PIN_GROUP(usb0),
++	SH_PFC_PIN_GROUP(usb0_ovc),
+ 	SH_PFC_PIN_GROUP(usb1),
++	SH_PFC_PIN_GROUP(usb1_ovc),
+ 	SH_PFC_PIN_GROUP(usb2),
++	SH_PFC_PIN_GROUP(usb2_ovc),
+ 	SH_PFC_PIN_GROUP(usb30),
++	SH_PFC_PIN_GROUP(usb30_ovc),
+ 	SH_PFC_PIN_GROUP(usb31),
++	SH_PFC_PIN_GROUP(usb31_ovc),
+ 	SH_PFC_PIN_GROUP(vin4_data8_a),
+ 	SH_PFC_PIN_GROUP(vin4_data16_a),
+ 	SH_PFC_PIN_GROUP(vin4_data18_a),
+@@ -4977,22 +5017,27 @@ static const char * const tmu_groups[] = {
+ 
+ static const char * const usb0_groups[] = {
+ 	"usb0",
++	"usb0_ovc",
+ };
+ 
+ static const char * const usb1_groups[] = {
+ 	"usb1",
++	"usb1_ovc",
+ };
+ 
+ static const char * const usb2_groups[] = {
+ 	"usb2",
++	"usb2_ovc",
+ };
+ 
+ static const char * const usb30_groups[] = {
+ 	"usb30",
++	"usb30_ovc",
+ };
+ 
+ static const char * const usb31_groups[] = {
+ 	"usb31",
++	"usb31_ovc",
+ };
+ 
+ static const char * const vin4_groups[] = {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+index 3ebe8deb24d6..745f93884fe1 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
+@@ -3911,44 +3911,79 @@ static const unsigned int tmu_tclk2_b_mux[] = {
+ 
+ /* - USB0 ------------------------------------------------------------------- */
+ static const unsigned int usb0_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
++	/* PWEN */
++	RCAR_GP_PIN(6, 24),
+ };
+ static const unsigned int usb0_mux[] = {
+-	USB0_PWEN_MARK, USB0_OVC_MARK,
++	USB0_PWEN_MARK,
++};
++static const unsigned int usb0_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 25),
++};
++static const unsigned int usb0_ovc_mux[] = {
++	USB0_OVC_MARK,
+ };
+ /* - USB1 ------------------------------------------------------------------- */
+ static const unsigned int usb1_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
++	/* PWEN */
++	RCAR_GP_PIN(6, 26),
+ };
+ static const unsigned int usb1_mux[] = {
+-	USB1_PWEN_MARK, USB1_OVC_MARK,
++	USB1_PWEN_MARK,
++};
++static const unsigned int usb1_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 27),
++};
++static const unsigned int usb1_ovc_mux[] = {
++	USB1_OVC_MARK,
+ };
+ /* - USB2 ------------------------------------------------------------------- */
+ static const unsigned int usb2_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 15),
++	/* PWEN */
++	RCAR_GP_PIN(6, 14),
+ };
+ static const unsigned int usb2_mux[] = {
+-	USB2_PWEN_MARK, USB2_OVC_MARK,
++	USB2_PWEN_MARK,
++};
++static const unsigned int usb2_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 15),
++};
++static const unsigned int usb2_ovc_mux[] = {
++	USB2_OVC_MARK,
+ };
+ /* - USB2_CH3 --------------------------------------------------------------- */
+ static const unsigned int usb2_ch3_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 30), RCAR_GP_PIN(6, 31),
++	/* PWEN */
++	RCAR_GP_PIN(6, 30),
+ };
+ static const unsigned int usb2_ch3_mux[] = {
+-	USB2_CH3_PWEN_MARK, USB2_CH3_OVC_MARK,
++	USB2_CH3_PWEN_MARK,
++};
++static const unsigned int usb2_ch3_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 31),
++};
++static const unsigned int usb2_ch3_ovc_mux[] = {
++	USB2_CH3_OVC_MARK,
+ };
+ 
+ /* - USB30 ------------------------------------------------------------------ */
+ static const unsigned int usb30_pins[] = {
+-	/* PWEN, OVC */
+-	RCAR_GP_PIN(6, 28), RCAR_GP_PIN(6, 29),
++	/* PWEN */
++	RCAR_GP_PIN(6, 28),
+ };
+ static const unsigned int usb30_mux[] = {
+-	USB30_PWEN_MARK, USB30_OVC_MARK,
++	USB30_PWEN_MARK,
++};
++static const unsigned int usb30_ovc_pins[] = {
++	/* OVC */
++	RCAR_GP_PIN(6, 29),
++};
++static const unsigned int usb30_ovc_mux[] = {
++	USB30_OVC_MARK,
+ };
+ 
+ /* - VIN4 ------------------------------------------------------------------- */
+@@ -4528,10 +4563,15 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(tmu_tclk2_a),
+ 	SH_PFC_PIN_GROUP(tmu_tclk2_b),
+ 	SH_PFC_PIN_GROUP(usb0),
++	SH_PFC_PIN_GROUP(usb0_ovc),
+ 	SH_PFC_PIN_GROUP(usb1),
++	SH_PFC_PIN_GROUP(usb1_ovc),
+ 	SH_PFC_PIN_GROUP(usb2),
++	SH_PFC_PIN_GROUP(usb2_ovc),
+ 	SH_PFC_PIN_GROUP(usb2_ch3),
++	SH_PFC_PIN_GROUP(usb2_ch3_ovc),
+ 	SH_PFC_PIN_GROUP(usb30),
++	SH_PFC_PIN_GROUP(usb30_ovc),
+ 	VIN_DATA_PIN_GROUP(vin4_data_a, 8),
+ 	VIN_DATA_PIN_GROUP(vin4_data_a, 10),
+ 	VIN_DATA_PIN_GROUP(vin4_data_a, 12),
+@@ -5026,22 +5066,27 @@ static const char * const tmu_groups[] = {
+ 
+ static const char * const usb0_groups[] = {
+ 	"usb0",
++	"usb0_ovc",
+ };
+ 
+ static const char * const usb1_groups[] = {
+ 	"usb1",
++	"usb1_ovc",
+ };
+ 
+ static const char * const usb2_groups[] = {
+ 	"usb2",
++	"usb2_ovc",
+ };
+ 
+ static const char * const usb2_ch3_groups[] = {
+ 	"usb2_ch3",
++	"usb2_ch3_ovc",
+ };
+ 
+ static const char * const usb30_groups[] = {
+ 	"usb30",
++	"usb30_ovc",
+ };
+ 
+ static const char * const vin4_groups[] = {
