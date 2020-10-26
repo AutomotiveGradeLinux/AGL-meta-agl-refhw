@@ -1,3 +1,7 @@
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+
+SRC_URI += "file://0001-Boot-Normal-World-in-EL2.patch"
+
 # It is believed the eMMC configuration below makes the result AGL
 # reference hardware specific, mark it as such to try to prevent
 # unintended usage on other boards.
