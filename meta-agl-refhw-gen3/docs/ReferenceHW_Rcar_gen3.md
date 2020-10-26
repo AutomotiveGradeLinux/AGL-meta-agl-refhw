@@ -88,7 +88,7 @@ Output the following image.
 ```
 7. Build the firmware:
 ```
-	bitbake arm-trusted-firmware u-boot
+	bitbake arm-trusted-firmware optee-os u-boot
 ```
 8. Afterwards, the firmware files will be in the directory `tmp/deploy/images/agl-refhw-h3`.
 
@@ -176,14 +176,14 @@ Output the following image.
 8. Flash firmware  
   The firmware are supposed to be stored on eMMC as following:
 
-  Name					| Load address		| eMMC partition 	| Flash address		| Description
+  Name					| eMMC partition 	| Flash address		| Load address		| Description
   --------------------------------------|-----------------------|-----------------------|-----------------------|-----------------------------
-  bootparam_sa0-4x2g.srec		| H'E6320000		| 1			| H'000000		| Boot parameter
-  bl2-agl-refhw-h3-4x2g.srec		| H'E6304000		| 1			| H'00001E		| bl2 loader
-  cert_header_sa6-4x2g.srec		| H'E6320000		| 1			| H'000180		| Certification
-  bl31-agl-refhw-h3-4x2g.srec		| H'44000000		| 1			| H'000200		| bl3 loader
-  tee-agl-refhw-h3.srec			| H'44100000		| 1			| H'001000		| OP-Tee
-  u-boot-elf-salvator-xs-4x2g.srec	| H'50000000		| 2			| H'000000		| U-boot
+  bootparam_sa0-4x2g.srec		| 1			| H'000000		| H'E6320000		| Boot parameter
+  bl2-agl-refhw-h3-4x2g.srec		| 1			| H'00001E		| H'E6304000		| bl2 loader
+  cert_header_sa6-4x2g.srec		| 1			| H'000180		| H'E6320000		| Certification
+  bl31-agl-refhw-h3-4x2g.srec		| 1			| H'000200		| H'44000000		| bl3 loader
+  tee-agl-refhw-h3.srec			| 1			| H'001000		| H'44100000		| OP-Tee
+  u-boot-elf-salvator-xs-4x2g.srec	| 2			| H'000000		| H'50000000		| U-boot
 
   You can find these firmwares in the AGL build directory $AGL_TOP/build/tmp/deploy/images/salvator-x
   and you can flash them by using **EM_W** command as following:  
