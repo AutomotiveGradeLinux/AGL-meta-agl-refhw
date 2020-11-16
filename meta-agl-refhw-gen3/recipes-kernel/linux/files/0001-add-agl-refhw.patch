@@ -3,6 +3,7 @@ Add AGL reference hardware support
 Upstream-Status: pending
 
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
+Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>
 
 ---
  arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 912 ++++++++++++++++++++++
@@ -16,7 +17,7 @@ new file mode 100644
 index 000000000000..a35cd24b27b9
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
-@@ -0,0 +1,912 @@
+@@ -0,0 +1,918 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Device Tree Source for common parts of AGL Reference Hardware board variants
@@ -362,7 +363,10 @@ index 000000000000..a35cd24b27b9
 +
 +	video-receiver@70 {
 +		compatible = "adi,adv7481";
-+		reg = <0x70>;
++		reg = <0x70 0x26 0x22 0x34 0x36 0x32
++		       0x31 0x30 0x41 0x79 0x4a 0x48>;
++		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
++			    "infoframe", "cbus", "cec", "sdp", "txa", "txb" ;
 +
 +		#address-cells = <1>;
 +		#size-cells = <0>;
@@ -394,7 +398,10 @@ index 000000000000..a35cd24b27b9
 +
 +	video-receiver@71 {
 +		compatible = "adi,adv7481";
-+		reg = <0x71>;
++		reg = <0x71 0x27 0x23 0x35 0x37 0x33
++		       0x28 0x29 0x42 0x78 0x4b 0x49>;
++		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
++			    "infoframe", "cbus", "cec", "sdp", "txa", "txb" ;
 +
 +		#address-cells = <1>;
 +		#size-cells = <0>;
@@ -1317,102 +1324,46 @@ diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748
 index da8f0621a10b..c2b37f70f711 100644
 --- a/drivers/media/i2c/adv748x/adv748x-core.c
 +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -165,6 +165,21 @@ static int adv748x_i2c_addresses[ADV748X_PAGE_MAX] = {
- 	ADV748X_I2C_TXA,
+@@ -97,6 +97,21 @@ static const struct adv748x_register_map
+ 	[ADV748X_PAGE_TXA] = { "txa", 0x4a },
  };
  
-+/* Default addresses for the I2C pages 0x71*/
-+static int adv748x_i2c_addresses2[ADV748X_PAGE_MAX] = {
-+	ADV748X_I2C_IO2,
-+	ADV748X_I2C_DPLL2,
-+	ADV748X_I2C_CP2,
-+	ADV748X_I2C_HDMI2,
-+	ADV748X_I2C_EDID2,
-+	ADV748X_I2C_REPEATER2,
-+	ADV748X_I2C_INFOFRAME2,
-+	ADV748X_I2C_CEC2,
-+	ADV748X_I2C_SDP2,
-+	ADV748X_I2C_TXB2,
-+	ADV748X_I2C_TXA2,
++static const struct adv748x_register_map adv748x_default_addresses2[] = {
++	[ADV748X_PAGE_IO] = { "main", 0x71 },
++	[ADV748X_PAGE_DPLL] = { "dpll", 0x27 },
++	[ADV748X_PAGE_CP] = { "cp", 0x23 },
++	[ADV748X_PAGE_HDMI] = { "hdmi", 0x35 },
++	[ADV748X_PAGE_EDID] = { "edid", 0x37 },
++	[ADV748X_PAGE_REPEATER] = { "repeater", 0x33 },
++	[ADV748X_PAGE_INFOFRAME] = { "infoframe", 0x28 },
++	[ADV748X_PAGE_CBUS] = { "cbus", 0x29 },
++	[ADV748X_PAGE_CEC] = { "cec", 0x42 },
++	[ADV748X_PAGE_SDP] = { "sdp", 0x78 },
++	[ADV748X_PAGE_TXB] = { "txb", 0x49 },
++	[ADV748X_PAGE_TXA] = { "txa", 0x4b },
 +};
 +
  static int adv748x_read_check(struct adv748x_state *state,
  			      int client_page, u8 reg)
  {
-@@ -238,9 +253,16 @@ static int adv748x_initialise_clients(struct adv748x_state *state)
+@@ -183,10 +198,17 @@ static int adv748x_initialise_clients(st
  	int ret;
  
  	for (i = ADV748X_PAGE_DPLL; i < ADV748X_PAGE_MAX; ++i) {
--		state->i2c_clients[i] =
--			adv748x_dummy_client(state, adv748x_i2c_addresses[i],
--					     ADV748X_IO_SLAVE_ADDR_BASE + i);
-+	        if((state->client->addr << 1) == 0xe0) {
-+		        state->i2c_clients[i] =
-+			        adv748x_dummy_client(state, adv748x_i2c_addresses[i],
-+						ADV748X_IO_SLAVE_ADDR_BASE + i);
+-		state->i2c_clients[i] = i2c_new_ancillary_device(
++		if ((state->client->addr << 1) == 0xe0) {
++			state->i2c_clients[i] = i2c_new_ancillary_device(
+ 				state->client,
+ 				adv748x_default_addresses[i].name,
+ 				adv748x_default_addresses[i].default_addr);
 +		} else {
-+			state->i2c_clients[i] =
-+				adv748x_dummy_client(state, adv748x_i2c_addresses2[i],
-+						ADV748X_IO_SLAVE_ADDR_BASE + i);
++			state->i2c_clients[i] = i2c_new_ancillary_device(
++				state->client,
++				adv748x_default_addresses2[i].name,
++				adv748x_default_addresses2[i].default_addr);
 +		}
-+
- 		if (state->i2c_clients[i] == NULL) {
+ 
+ 		if (IS_ERR(state->i2c_clients[i])) {
  			adv_err(state, "failed to create i2c client %u\n", i);
- 			return -ENOMEM;
-@@ -508,6 +530,20 @@ static const struct adv748x_reg_value adv748x_set_slave_address[] = {
- 	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
- };
- 
-+static const struct adv748x_reg_value adv748x_set_slave_address2[] = {
-+	{ADV748X_PAGE_IO, 0xf3, ADV748X_I2C_DPLL2 << 1},
-+	{ADV748X_PAGE_IO, 0xf4, ADV748X_I2C_CP2 << 1},
-+	{ADV748X_PAGE_IO, 0xf5, ADV748X_I2C_HDMI2 << 1},
-+	{ADV748X_PAGE_IO, 0xf6, ADV748X_I2C_EDID2 << 1},
-+	{ADV748X_PAGE_IO, 0xf7, ADV748X_I2C_REPEATER2 << 1},
-+	{ADV748X_PAGE_IO, 0xf8, ADV748X_I2C_INFOFRAME2 << 1},
-+	{ADV748X_PAGE_IO, 0xfa, ADV748X_I2C_CEC2 << 1},
-+	{ADV748X_PAGE_IO, 0xfb, ADV748X_I2C_SDP2 << 1},
-+	{ADV748X_PAGE_IO, 0xfc, ADV748X_I2C_TXB2 << 1},
-+	{ADV748X_PAGE_IO, 0xfd, ADV748X_I2C_TXA2 << 1},
-+	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
-+};
-+
- /* Supported Formats For Script Below */
- /* - 01-29 HDMI to MIPI TxA CSI 4-Lane - RGB888: */
- static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
-@@ -683,7 +719,11 @@ static int adv748x_reset(struct adv748x_state *state)
- 	if (ret < 0)
- 		return ret;
- 
--	ret = adv748x_write_regs(state, adv748x_set_slave_address);
-+	if((state->client->addr << 1) == 0xe0) {
-+		ret = adv748x_write_regs(state, adv748x_set_slave_address);	//i2c address 0x70
-+	} else {
-+		ret = adv748x_write_regs(state, adv748x_set_slave_address2);	//i2c address 0x71
-+	}
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index fb30bfade946..ac50a9e41b08 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -40,6 +40,18 @@
- #define ADV748X_I2C_TXB			0x48	/* CSI-TXB Map */
- #define ADV748X_I2C_TXA			0x4a	/* CSI-TXA Map */
- 
-+#define ADV748X_I2C_IO2			0x71	/* IO Map */
-+#define ADV748X_I2C_DPLL2		0x27	/* DPLL Map */
-+#define ADV748X_I2C_CP2			0x23	/* CP Map */
-+#define ADV748X_I2C_HDMI2		0x35	/* HDMI Map */
-+#define ADV748X_I2C_EDID2		0x37	/* EDID Map */
-+#define ADV748X_I2C_REPEATER2		0x33	/* HDMI RX Repeater Map */
-+#define ADV748X_I2C_INFOFRAME2		0x30	/* HDMI RX InfoFrame Map */
-+#define ADV748X_I2C_CEC2		0x42	/* CEC Map */
-+#define ADV748X_I2C_SDP2		0x78	/* SDP Map */
-+#define ADV748X_I2C_TXB2		0x49	/* CSI-TXB Map */
-+#define ADV748X_I2C_TXA2		0x4b	/* CSI-TXA Map */
-+
- enum adv748x_page {
- 	ADV748X_PAGE_IO,
- 	ADV748X_PAGE_DPLL,
+
+
