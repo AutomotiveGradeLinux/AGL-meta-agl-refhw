@@ -16,7 +16,7 @@ This layer depends on:
   branch: dunfell
 
   URI: https://github.com/renesas-rcar/meta-renesas
-  branch: dunfell-dev-4.14
+  branch: dunfell-Yocto-v4.1.0
 
 
 Build Instructions
@@ -44,16 +44,17 @@ II. Build for Reference Hardware
 You should follow the instructions in the "Building for Supported Renesas Boards"
 section on the AGL developer site to build images for the reference hardware.
 
-Use the "h3ulcb" machine when configuring, e.g.:
+Use the "h3ulcb" machine and "agl-refhw-h3" feature when configuring, e.g.:
 
 	$ cd $AGL_TOP
 	$ source meta-agl/scripts/aglsetup.sh -m h3uclb -b build \
-	  agl-devel agl-demo agl-localdev
+	  agl-refhw-h3 agl-demo agl-devel
 
-This works as the AGL reference hardware support has been integrated with the
-"h3ulcb" (and "h3ulcb-nogfx") machine templates in the AGL UCB tree.  In the
-resulting build, the image can be used on the reference hardware by using the
-DTB file "r8a7795-agl-refhw.dtb".  In the reference hardware u-boot settings,
+This works as the AGL reference hardware support activated by the "agl-refhw-h3"
+feature integrates on top of the "h3ulcb" (or "h3ulcb-nogfx") machine support in
+the AGL UCB tree.  Note that it has not been tested with the "h3ulcb-kf" machine.
+In the resulting build, the image can be used on the reference hardware by using
+the DTB file "r8a7795-agl-refhw.dtb".  In the reference hardware u-boot settings,
 this can be done with the following (in case of booting from the Micro SD card
 in SD#0):
 
@@ -81,5 +82,3 @@ Please refer to meta-agl-refhw-gen3/docs/ReferenceHW_Rcar_gen3.md for details.
 IV. Notes
 =========
 1.  SD#1 is not supported.
-2.  There are suspicious HDMI0/1 interrupts detected and disabled forcibly by
-    the kernel during boot. The reason is under investigation.
