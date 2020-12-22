@@ -47,7 +47,7 @@ section on the AGL developer site to build images for the reference hardware.
 Use the "h3ulcb" machine and "agl-refhw-h3" feature when configuring, e.g.:
 
 	$ cd $AGL_TOP
-	$ source meta-agl/scripts/aglsetup.sh -m h3uclb -b build \
+	$ source meta-agl/scripts/aglsetup.sh -m h3ulcb -b build \
 	  agl-refhw-h3 agl-demo agl-devel
 
 This works as the AGL reference hardware support activated by the "agl-refhw-h3"
