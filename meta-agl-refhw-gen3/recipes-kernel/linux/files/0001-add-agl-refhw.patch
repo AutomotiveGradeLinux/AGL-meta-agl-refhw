@@ -6,15 +6,14 @@ Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>
 
 ---
- arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 912 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 918 ++++++++++++++++++++++
  arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts | 378 +++++++++
- drivers/media/i2c/adv748x/adv748x-core.c          |  48 +-
- drivers/media/i2c/adv748x/adv748x.h               |  12 +
- 4 files changed, 1346 insertions(+), 4 deletions(-)
+ drivers/media/i2c/adv748x/adv748x-core.c          |  24 +-
+ 3 files changed, 1319 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 new file mode 100644
-index 000000000000..a35cd24b27b9
+index 000000000000..cdd5975a77a2
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 @@ -0,0 +1,918 @@
@@ -150,7 +149,7 @@ index 000000000000..a35cd24b27b9
 +	sound_card: sound {
 +		compatible = "audio-graph-card";
 +
-+		label = "rcar-sound";
++		label = "ak4613";
 +
 +		dais = <&rsnd_port0>;
 +	};
@@ -1321,10 +1320,10 @@ index 000000000000..0a63d2e7a64b
 +	non-removable;
 +};
 diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index da8f0621a10b..c2b37f70f711 100644
+index 87092ce5ba73..357c334113aa 100644
 --- a/drivers/media/i2c/adv748x/adv748x-core.c
 +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -97,6 +97,21 @@ static const struct adv748x_register_map
+@@ -97,6 +97,21 @@ static const struct adv748x_register_map adv748x_default_addresses[] = {
  	[ADV748X_PAGE_TXA] = { "txa", 0x4a },
  };
  
@@ -1346,7 +1345,7 @@ index da8f0621a10b..c2b37f70f711 100644
  static int adv748x_read_check(struct adv748x_state *state,
  			      int client_page, u8 reg)
  {
-@@ -183,10 +198,17 @@ static int adv748x_initialise_clients(st
+@@ -183,10 +198,17 @@ static int adv748x_initialise_clients(struct adv748x_state *state)
  	int ret;
  
  	for (i = ADV748X_PAGE_DPLL; i < ADV748X_PAGE_MAX; ++i) {
@@ -1365,5 +1364,3 @@ index da8f0621a10b..c2b37f70f711 100644
  
  		if (IS_ERR(state->i2c_clients[i])) {
  			adv_err(state, "failed to create i2c client %u\n", i);
-
-
