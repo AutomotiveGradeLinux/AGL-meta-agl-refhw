@@ -1,6 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI_append_agl-refhw-h3 = " file://0001-rcar_gen3-plat-Delete-FDT-function-calls.patch"
+SRC_URI_append_rcar-gen3 = " file://0001-rcar_gen3-plat-Delete-FDT-function-calls.patch"
 
 # Apply the patch AGL applies for all rcar3 in meta-agl-bsp when
 # building the standalone agl-refhw-h3 machine.
