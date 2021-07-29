@@ -4,27 +4,27 @@ Split the r8a7795 USB pin groups to create separate groups for the
 OVC pins.  This is required for the AGL reference hardware boards,
 which use some of the OVC pins in other pinmux modes.
 
-Upstream-Status: pending    
- 
+Upstream-Status: pending
+
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 Signed-off-by: Raquel Medina <raquel.medina@konsulko.com
 
 ---
- .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |  2 +-
- arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |  2 +-
- .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |  4 +-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi   |  6 +-
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           |  2 +-
- arch/arm64/boot/dts/renesas/ulcb.dtsi              |  2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           | 75 +++++++++++++++++-----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c               | 75 +++++++++++++++++-----
+ .../boot/dts/renesas/r8a77950-salvator-x.dts  |  2 +-
+ .../boot/dts/renesas/r8a77951-salvator-x.dts  |  2 +-
+ .../boot/dts/renesas/r8a77951-salvator-xs.dts |  4 +-
+ .../boot/dts/renesas/salvator-common.dtsi     |  6 +-
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi      |  2 +-
+ arch/arm64/boot/dts/renesas/ulcb.dtsi         |  2 +-
+ drivers/pinctrl/renesas/pfc-r8a77950.c        | 75 +++++++++++++++----
+ drivers/pinctrl/renesas/pfc-r8a77951.c        | 75 +++++++++++++++----
  8 files changed, 129 insertions(+), 39 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-index 63d7cd7c5c47..4a3e0deaa929 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1-salvator-x.dts
-@@ -166,7 +166,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77950-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77950-salvator-x.dts
+index 6f271b0e51fc..73178b01d7e0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77950-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77950-salvator-x.dts
+@@ -166,7 +166,7 @@ &ohci2 {
  
  &pfc {
  	usb2_pins: usb2 {
@@ -33,11 +33,11 @@ index 63d7cd7c5c47..4a3e0deaa929 100644
  		function = "usb2";
  	};
  };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-index 4f743db4b9ae..6a1f58ed40d1 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts
-@@ -166,7 +166,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77951-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77951-salvator-x.dts
+index 464c5b0de088..5c403e871c0a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77951-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77951-salvator-x.dts
+@@ -166,7 +166,7 @@ &ohci2 {
  
  &pfc {
  	usb2_pins: usb2 {
@@ -46,11 +46,11 @@ index 4f743db4b9ae..6a1f58ed40d1 100644
  		function = "usb2";
  	};
  };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-index 9bf8bee35113..9e8dbeecd755 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
-@@ -190,7 +190,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
+index d4e3bd0ee297..f47ee69a17ab 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
+@@ -190,7 +190,7 @@ pcie_sata_switch {
  
  &pfc {
  	usb2_pins: usb2 {
@@ -59,7 +59,7 @@ index 9bf8bee35113..9e8dbeecd755 100644
  		function = "usb2";
  	};
  
-@@ -207,7 +207,7 @@
+@@ -207,7 +207,7 @@ usb2_pins: usb2 {
  	 *	- Connect GP6_{04,21} to ADV7842.
  	 */
  	usb2_ch3_pins: usb2_ch3 {
@@ -69,10 +69,10 @@ index 9bf8bee35113..9e8dbeecd755 100644
  	};
  };
 diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 08b1259c4a1c..26a8cfbcf4c3 100644
+index 3c2af219d6e6..5a55a775bc8f 100644
 --- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
 +++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -751,13 +751,13 @@
+@@ -752,13 +752,13 @@ sound_clk_pins: sound_clk {
  	};
  
  	usb0_pins: usb0 {
@@ -88,7 +88,7 @@ index 08b1259c4a1c..26a8cfbcf4c3 100644
  			function = "usb1";
  		};
  
-@@ -773,7 +773,7 @@
+@@ -774,7 +774,7 @@ pwen {
  	};
  
  	usb30_pins: usb30 {
@@ -98,10 +98,10 @@ index 08b1259c4a1c..26a8cfbcf4c3 100644
  	};
  };
 diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 202177706cde..6a09243d2b49 100644
+index ecc91af63ddf..4e69041f2a87 100644
 --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
 +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -285,7 +285,7 @@
+@@ -1008,7 +1008,7 @@ sound_pcm_pins: sound-pcm {
  	};
  
  	usb0_pins: usb0 {
@@ -109,12 +109,12 @@ index 202177706cde..6a09243d2b49 100644
 +		groups = "usb0", "usb0_ovc";
  		function = "usb0";
  	};
- };
+ 
 diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 9fda41e8317c..469665305630 100644
+index 346e7f82b846..47c546fa3e87 100644
 --- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
 +++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -375,7 +375,7 @@
+@@ -376,7 +376,7 @@ sound_clk_pins: sound-clk {
  	};
  
  	usb1_pins: usb1 {
@@ -123,11 +123,11 @@ index 9fda41e8317c..469665305630 100644
  		function = "usb1";
  	};
  };
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 48fd5415f811..153039dfc83e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -3834,44 +3834,79 @@ static const unsigned int tmu_tclk2_b_mux[] = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77950.c b/drivers/pinctrl/renesas/pfc-r8a77950.c
+index b6576c8b9220..d445e73456e7 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77950.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77950.c
+@@ -3842,44 +3842,79 @@ static const unsigned int tpu_to3_mux[] = {
  
  /* - USB0 ------------------------------------------------------------------- */
  static const unsigned int usb0_pins[] = {
@@ -220,9 +220,9 @@ index 48fd5415f811..153039dfc83e 100644
 +static const unsigned int usb31_ovc_mux[] = {
 +	USB31_OVC_MARK,
  };
-
- static const unsigned int vin4_data18_a_mux[] = {
-@@ -4430,10 +4465,15 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 
+ static const unsigned int vin4_data18_a_pins[] = {
+@@ -4435,10 +4470,15 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
  	SH_PFC_PIN_GROUP(tpu_to2),
  	SH_PFC_PIN_GROUP(tpu_to3),
  	SH_PFC_PIN_GROUP(usb0),
@@ -236,9 +236,9 @@ index 48fd5415f811..153039dfc83e 100644
  	SH_PFC_PIN_GROUP(usb31),
 +	SH_PFC_PIN_GROUP(usb31_ovc),
  	VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
- 	VIN_DATA_PIN_GROUP(vin4_data. 16, _a),
+ 	VIN_DATA_PIN_GROUP(vin4_data, 16, _a),
  	SH_PFC_PIN_GROUP(vin4_data18_a),
-@@ -4928,22 +4967,27 @@ static const char * const tpu_groups[] = {
+@@ -4937,22 +4977,27 @@ static const char * const tpu_groups[] = {
  
  static const char * const usb0_groups[] = {
  	"usb0",
@@ -266,11 +266,11 @@ index 48fd5415f811..153039dfc83e 100644
  };
  
  static const char * const vin4_groups[] = {
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 2988c1d43c32..5292ea7c15de 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3925,44 +3925,79 @@ static const unsigned int tmu_tclk2_b_mux[] = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77951.c b/drivers/pinctrl/renesas/pfc-r8a77951.c
+index ce754b88d0fb..61ff1c0454d7 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77951.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77951.c
+@@ -3933,44 +3933,79 @@ static const unsigned int tpu_to3_mux[] = {
  
  /* - USB0 ------------------------------------------------------------------- */
  static const unsigned int usb0_pins[] = {
@@ -365,23 +365,23 @@ index 2988c1d43c32..5292ea7c15de 100644
  };
  
  /* - VIN4 ------------------------------------------------------------------- */
-@@ -4507,10 +4542,15 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(tpu_to2),
- 	SH_PFC_PIN_GROUP(tpu_to3),
- 	SH_PFC_PIN_GROUP(usb0),
-+	SH_PFC_PIN_GROUP(usb0_ovc),
- 	SH_PFC_PIN_GROUP(usb1),
-+	SH_PFC_PIN_GROUP(usb1_ovc),
- 	SH_PFC_PIN_GROUP(usb2),
-+	SH_PFC_PIN_GROUP(usb2_ovc),
- 	SH_PFC_PIN_GROUP(usb2_ch3),
-+	SH_PFC_PIN_GROUP(usb2_ch3_ovc),
- 	SH_PFC_PIN_GROUP(usb30),
-+	SH_PFC_PIN_GROUP(usb30_ovc),
- 	VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
- 	VIN_DATA_PIN_GROUP(vin4_data, 10, _a),
- 	VIN_DATA_PIN_GROUP(vin4_data, 12, _a),
-@@ -5012,22 +5052,27 @@ static const char * const tmu_groups[] = {
+@@ -4491,10 +4526,15 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(tpu_to2),
+ 		SH_PFC_PIN_GROUP(tpu_to3),
+ 		SH_PFC_PIN_GROUP(usb0),
++		SH_PFC_PIN_GROUP(usb0_ovc),
+ 		SH_PFC_PIN_GROUP(usb1),
++		SH_PFC_PIN_GROUP(usb1_ovc),
+ 		SH_PFC_PIN_GROUP(usb2),
++		SH_PFC_PIN_GROUP(usb2_ovc),
+ 		SH_PFC_PIN_GROUP(usb2_ch3),
++		SH_PFC_PIN_GROUP(usb2_ch3_ovc),
+ 		SH_PFC_PIN_GROUP(usb30),
++		SH_PFC_PIN_GROUP(usb30_ovc),
+ 		VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
+ 		VIN_DATA_PIN_GROUP(vin4_data, 10, _a),
+ 		VIN_DATA_PIN_GROUP(vin4_data, 12, _a),
+@@ -5034,22 +5074,27 @@ static const char * const tpu_groups[] = {
  
  static const char * const usb0_groups[] = {
  	"usb0",
