@@ -707,7 +707,7 @@ index 000000000000..cdd5975a77a2
 +	};
 +
 +	usb1_pins: usb1 {
-+		groups = "usb1";
++		groups = "usb1_ovc";
 +		function = "usb1";
 +	};
 +
