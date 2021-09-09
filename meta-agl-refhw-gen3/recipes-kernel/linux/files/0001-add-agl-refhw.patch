@@ -7,13 +7,13 @@ Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>
 
 ---
  arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 918 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts | 378 +++++++++
+ arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts | 392 +++++++++
  drivers/media/i2c/adv748x/adv748x-core.c          |  24 +-
- 3 files changed, 1319 insertions(+), 1 deletion(-)
+ 3 files changed, 1333 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 new file mode 100644
-index 000000000000..cdd5975a77a2
+index 000000000000..796ac4c078e0
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 @@ -0,0 +1,918 @@
@@ -937,10 +937,10 @@ index 000000000000..cdd5975a77a2
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
 new file mode 100644
-index 000000000000..0a63d2e7a64b
+index 000000000000..83638a6228c0
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
-@@ -0,0 +1,378 @@
+@@ -0,0 +1,392 @@
 +/*
 + * Device Tree Source for the AGL reference hardware board with R-Car H3 ES3.0
 + *
@@ -1318,6 +1318,20 @@ index 000000000000..0a63d2e7a64b
 +&sdhi3 {
 +	/delete-property/ wp-gpios;
 +	non-removable;
++};
++
++&gpio6 {
++	/* Enable the CAN 1 & 2 transceivers */
++	can-1-transceiver-stb {
++		gpio-hog;
++		gpios = <21 GPIO_ACTIVE_HIGH>;
++		output-high;
++	};
++	can-2-transceiver-stb {
++		gpio-hog;
++		gpios = <12 GPIO_ACTIVE_HIGH>;
++		output-high;
++	};
 +};
 diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
 index 87092ce5ba73..357c334113aa 100644
