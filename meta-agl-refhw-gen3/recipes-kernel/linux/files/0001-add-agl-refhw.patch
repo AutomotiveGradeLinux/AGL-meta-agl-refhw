@@ -937,7 +937,7 @@ index 000000000000..796ac4c078e0
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
 new file mode 100644
-index 000000000000..83638a6228c0
+index 000000000000..6c846a94afe2
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
 @@ -0,0 +1,392 @@
@@ -1325,12 +1325,12 @@ index 000000000000..83638a6228c0
 +	can-1-transceiver-stb {
 +		gpio-hog;
 +		gpios = <21 GPIO_ACTIVE_HIGH>;
-+		output-high;
++		output-low;
 +	};
 +	can-2-transceiver-stb {
 +		gpio-hog;
 +		gpios = <12 GPIO_ACTIVE_HIGH>;
-+		output-high;
++		output-low;
 +	};
 +};
 diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
