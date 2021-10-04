@@ -1,4 +1,7 @@
-Add AGL reference hardware support
+From a544d23becdda2f8fb44506498c57fc46b5a075d Mon Sep 17 00:00:00 2001
+From: Scott Murray <scott.murray@konsulko.com>
+Date: Tue, 21 Sep 2021 15:45:18 -0400
+Subject: [PATCH 2/4] Add AGL reference hardware support
 
 Upstream-Status: pending
 
@@ -6,12 +9,13 @@ Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>
 [asm330lhh interrupt fix]
 Signed-off-by: Hiroyuki Ishii <ishii.hiroyuki002@jp.panasonic.com>
-
 ---
- arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 919 ++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts | 392 +++++++++
- drivers/media/i2c/adv748x/adv748x-core.c          |  24 +-
+ .../boot/dts/renesas/agl-refhw-common.dtsi    | 919 ++++++++++++++++++
+ .../boot/dts/renesas/r8a77951-agl-refhw.dts   | 392 ++++++++
+ drivers/media/i2c/adv748x/adv748x-core.c      |  24 +-
  3 files changed, 1334 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts
 
 diff --git a/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 new file mode 100644
@@ -938,11 +942,11 @@ index 000000000000..7474ed578c21
 +
 +	status = "okay";
 +};
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
+diff --git a/arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts b/arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts
 new file mode 100644
-index 000000000000..6c846a94afe2
+index 000000000000..3d1107f6d9cc
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts
 @@ -0,0 +1,392 @@
 +/*
 + * Device Tree Source for the AGL reference hardware board with R-Car H3 ES3.0
@@ -958,19 +962,19 @@ index 000000000000..6c846a94afe2
 +/*
 + * This file is for the most part derived from:
 + *
-+ * - r8a7795-salvator-xs-4x2g.dts
-+ * - r8a7795-salvator-xs.dts
++ * - r8a77951-salvator-xs-4x2g.dts
++ * - r8a77951-salvator-xs.dts
 + * - salvator-xs.dtsi
 + *
 + * With agl-refhw-common.dtsi replacing (and derived from) salvator-common.dtsi.
 + */
 +
 +/dts-v1/;
-+#include "r8a7795.dtsi"
++#include "r8a77951.dtsi"
 +#include "agl-refhw-common.dtsi"
 +
 +/ {
-+	model = "AGL Reference Hardware based on r8a7795 ES3.0+ with 8GiB (4 x 2 GiB)";
++	model = "AGL Reference Hardware based on r8a77951 ES3.0+ with 8GiB (4 x 2 GiB)";
 +	compatible = "agl,refhw-h3", "renesas,r8a7795";
 +
 +	memory@48000000 {
@@ -1200,7 +1204,7 @@ index 000000000000..6c846a94afe2
 +	 * - On Salvator-X[S], GP6_3[01] are connected to ADV7482 as irq pins
 +	 *   (when SW31 is the default setting on Salvator-XS).
 +	 * - If SW31 is the default setting, you cannot use USB2.0 ch3 on
-+	 *   r8a7795 with Salvator-XS.
++	 *   r8a77951 with Salvator-XS.
 +	 *   Hence the SW31 setting must be changed like 2) below.
 +	 *   1) Default setting of SW31: ON-ON-OFF-OFF-OFF-OFF:
 +	 *	- Connect GP6_3[01] to ADV7842.
@@ -1244,10 +1248,10 @@ index 000000000000..6c846a94afe2
 +	status = "okay";
 +};
 +
-+/* End r8a7795-salvator-xs.dts content */
++/* End r8a77951-salvator-xs.dts content */
 +
 +
-+/* Start r8a7795-salvator-xs-4x2g.dts content */
++/* Start r8a77951-salvator-xs-4x2g.dts content */
 +
 +&pciec0 {
 +	/* Map all possible DDR as inbound ranges */
@@ -1259,7 +1263,7 @@ index 000000000000..6c846a94afe2
 +	dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
 +};
 +
-+/* End r8a7795-salvator-xs-4x2g.dts content */
++/* End r8a77951-salvator-xs-4x2g.dts content */
 +
 +
 +/* Start salvator-xs.dts content */
@@ -1337,7 +1341,7 @@ index 000000000000..6c846a94afe2
 +	};
 +};
 diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 87092ce5ba73..357c334113aa 100644
+index fe156e8f88b8..da295b106561 100644
 --- a/drivers/media/i2c/adv748x/adv748x-core.c
 +++ b/drivers/media/i2c/adv748x/adv748x-core.c
 @@ -97,6 +97,21 @@ static const struct adv748x_register_map adv748x_default_addresses[] = {
@@ -1381,3 +1385,6 @@ index 87092ce5ba73..357c334113aa 100644
  
  		if (IS_ERR(state->i2c_clients[i])) {
  			adv_err(state, "failed to create i2c client %u\n", i);
+-- 
+2.31.1
+
