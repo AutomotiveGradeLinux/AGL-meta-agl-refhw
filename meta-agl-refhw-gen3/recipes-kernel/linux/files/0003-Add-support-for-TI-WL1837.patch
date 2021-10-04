@@ -1,4 +1,7 @@
-Add support for TI WL1837
+From 8d08ab1372ede05e1c9dabdd242fd4bb1e0be414 Mon Sep 17 00:00:00 2001
+From: Scott Murray <scott.murray@konsulko.com>
+Date: Tue, 21 Sep 2021 15:52:18 -0400
+Subject: [PATCH 3/4] Add support for TI WL1837
 
 This patch adds description of TI WL1837 and links interfaces
 to communicate with the IC.
@@ -7,7 +10,7 @@ Signed-off-by: ito.yoshiki001 <ito.yoshiki001@jp.panasonic.com>
 
 Reworked:
 - WL1837 specific devicetree configuration moved to the board
-  specific r8a7795-agl-refhw.dts from agl-refhw-common.dtsi.
+  specific r8a77951-agl-refhw.dts from agl-refhw-common.dtsi.
 - Switched to HCI_LL driver for BT support to match other upstream
   users and prepare for btwilink driver going away (dropped in 5.5
   upstream).
@@ -17,18 +20,19 @@ Reworked:
   the HDMI1 audio left over from the original Salvator-X devicetree.
   The latter is clean up, as HDMI1 as defined uses a SSI that
   conflicts with the ak4613 configuration.
+- Updated for kernel 5.10 in BSP v5.5.0.
 
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
- arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 37 +++++++---
- arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts | 84 ++++++++++++++++++-----
+ .../boot/dts/renesas/agl-refhw-common.dtsi    | 37 +++++---
+ .../boot/dts/renesas/r8a77951-agl-refhw.dts   | 84 +++++++++++++++----
  2 files changed, 94 insertions(+), 27 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
-index 796ac4c078e0..6f34b54c6ce1 100644
+index 7474ed578c21..3ae835a1ff13 100644
 --- a/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 +++ b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
-@@ -183,6 +183,18 @@
+@@ -183,6 +183,18 @@ vccq_sdhi3: regulator-vccq-sdhi3 {
  			  1800000 0>;
  	};
  
@@ -47,7 +51,7 @@ index 796ac4c078e0..6f34b54c6ce1 100644
  	hdmi0-out {
  		compatible = "hdmi-connector";
  		label = "HDMI0 OUT";
-@@ -672,7 +684,8 @@
+@@ -673,7 +685,8 @@ sdhi3_pins_uhs: sd3_uhs {
  	};
  
  	sound_pins: sound {
@@ -57,7 +61,7 @@ index 796ac4c078e0..6f34b54c6ce1 100644
  		function = "ssi";
  	};
  
-@@ -827,24 +840,28 @@
+@@ -828,24 +841,28 @@ &sdhi2 {
  };
  
  &sdhi3 {
@@ -95,11 +99,11 @@ index 796ac4c078e0..6f34b54c6ce1 100644
  &usb_extal_clk {
  	clock-frequency = <50000000>;
  };
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
-index 83638a6228c0..97cc6e08ee8f 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts
-@@ -119,6 +119,23 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts b/arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts
+index 3d1107f6d9cc..24ba2c5c4b88 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts
+@@ -119,6 +119,23 @@ adv7123_out: endpoint {
  		};
  	};
  
@@ -123,7 +127,7 @@ index 83638a6228c0..97cc6e08ee8f 100644
  };
  
  &adsp {
-@@ -155,8 +172,14 @@
+@@ -155,8 +172,14 @@ &hsusb3 {
  
  &sound_card {
  	dais = <&rsnd_port0	/* ak4613 */
@@ -140,7 +144,7 @@ index 83638a6228c0..97cc6e08ee8f 100644
  };
  
  &hdmi0 {
-@@ -192,12 +215,6 @@
+@@ -192,12 +215,6 @@ rcar_dw_hdmi1_out: endpoint {
  				remote-endpoint = <&hdmi1_con>;
  			};
  		};
@@ -153,7 +157,7 @@ index 83638a6228c0..97cc6e08ee8f 100644
  	};
  };
  
-@@ -215,8 +232,11 @@
+@@ -215,8 +232,11 @@ &ohci3 {
  };
  
  &rcar_sound {
@@ -166,7 +170,7 @@ index 83638a6228c0..97cc6e08ee8f 100644
  		rsnd_port1: port@1 {
  			reg = <1>;
  			rsnd_endpoint1: endpoint {
-@@ -231,14 +251,15 @@
+@@ -231,14 +251,15 @@ rsnd_endpoint1: endpoint {
  		};
  		rsnd_port2: port@2 {
  			reg = <2>;
@@ -188,7 +192,7 @@ index 83638a6228c0..97cc6e08ee8f 100644
  			};
  		};
  	};
-@@ -373,11 +394,40 @@
+@@ -373,11 +394,40 @@ &sdhi0 {
  };
  
  &sdhi3 {
@@ -231,3 +235,6 @@ index 83638a6228c0..97cc6e08ee8f 100644
  	/* Enable the CAN 1 & 2 transceivers */
  	can-1-transceiver-stb {
  		gpio-hog;
+-- 
+2.31.1
+

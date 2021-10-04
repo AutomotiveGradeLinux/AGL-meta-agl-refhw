@@ -141,7 +141,7 @@ download.
     | cert_header_sa6-agl-refhw-4x2g.srec | 1              | H'000180      | H'E6320000   | Certification
     | bl31-agl-refhw-4x2g.srec            | 1              | H'000200      | H'44000000   | bl3 loader
     | tee-h3ulcb.srec                     | 1              | H'001000      | H'44100000   | OP-Tee
-    | u-boot-elf-agl-refhw-4x2g.srec      | 2              | H'000000      | H'50000000   | U-boot
+    | u-boot-elf-agl-refhw.srec           | 2              | H'000000      | H'50000000   | U-boot
 
     If the firmware has been built using a standalone build outside of AGL
     (see [below](#standalone-build)), then the firmware files can be be found in
@@ -154,7 +154,7 @@ download.
     | cert_header_sa6-4x2g.srec           | 1              | H'000180      | H'E6320000   | Certification
     | bl31-agl-refhw-h3-4x2g.srec         | 1              | H'000200      | H'44000000   | bl3 loader
     | tee-agl-refhw-h3.srec               | 1              | H'001000      | H'44100000   | OP-Tee
-    | u-boot-elf-salvator-xs-4x2g.srec    | 2              | H'000000      | H'50000000   | U-boot
+    | u-boot-elf-salvator-x.srec          | 2              | H'000000      | H'50000000   | U-boot
 
     The firmware files can be flashed by using **EM_W** command for each of them:
 
@@ -216,7 +216,7 @@ BSP layer on top of the meta-rcar-gen3 layer in meta-renesas.
     ```
     git clone https://github.com/renesas-rcar/meta-renesas
     cd meta-renesas
-    git checkout dunfell-dev-4.14
+    git checkout Renesas-Yocto-v5.5.0
     cd ..
     git clone git://git.openembedded.org/meta-openembedded
     cd meta-openembedded

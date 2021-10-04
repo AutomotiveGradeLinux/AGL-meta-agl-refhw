@@ -16,8 +16,8 @@ This layer depends on:
   branch: dunfell
 
   URI: https://github.com/renesas-rcar/meta-renesas
-  branch: dunfell-dev
-  - Note that the dunfell-Yocto-v4.7.0 tag is currently the latest revision
+  branch: dunfell
+  - Note that the Renesas-Yocto-v5.5.0 tag is currently the latest revision
     verified as compatible, it is recommended that it be used.
 
 

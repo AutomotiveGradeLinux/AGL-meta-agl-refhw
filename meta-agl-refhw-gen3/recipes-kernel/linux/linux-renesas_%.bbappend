@@ -1,11 +1,10 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
-	file://0001-create-r8a7795-usb-ovc-pinmux-groups.patch \
-	file://0001-add-agl-refhw.patch \
-	file://0003-rcar3-dw-hdmi-cec-mute.patch \
-	file://0001-Add-support-for-TI-WL1837.patch \
-	file://0002-revert-e233201a.patch \
+	file://0001-Create-r8a7795-USB-OVC-pin-groups.patch \
+	file://0002-Add-AGL-reference-hardware-support.patch \
+	file://0003-Add-support-for-TI-WL1837.patch \
+	file://0004-Mute-CEC-IRQ-in-dw-hdmi-driver-init.patch \
 	file://refhw-rcar.cfg \
 "
 
