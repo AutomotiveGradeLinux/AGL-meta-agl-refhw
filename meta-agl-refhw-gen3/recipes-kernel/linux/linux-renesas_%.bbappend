@@ -5,7 +5,6 @@ SRC_URI_append = " \
 	file://0001-add-agl-refhw.patch \
 	file://0003-rcar3-dw-hdmi-cec-mute.patch \
 	file://0001-Add-support-for-TI-WL1837.patch \
-	file://0002-revert-e233201a.patch \
 	file://refhw-rcar.cfg \
 "
 
