@@ -4,19 +4,21 @@ Upstream-Status: pending
 
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>
+[asm330lhh interrupt fix]
+Signed-off-by: Hiroyuki Ishii <ishii.hiroyuki002@jp.panasonic.com>
 
 ---
- arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 918 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi | 919 ++++++++++++++++++++++
  arch/arm64/boot/dts/renesas/r8a7795-agl-refhw.dts | 392 +++++++++
  drivers/media/i2c/adv748x/adv748x-core.c          |  24 +-
- 3 files changed, 1333 insertions(+), 1 deletion(-)
+ 3 files changed, 1334 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 new file mode 100644
-index 000000000000..796ac4c078e0
+index 000000000000..7474ed578c21
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
-@@ -0,0 +1,918 @@
+@@ -0,0 +1,919 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Device Tree Source for common parts of AGL Reference Hardware board variants
@@ -447,15 +449,16 @@ index 000000000000..796ac4c078e0
 +
 +	status = "okay";
 +
-+	clock-frequency = <100000>;
++	clock-frequency = <400000>;
 +
 +	asm330lhh@6a {
 +		compatible = "st,asm330lhh";
 +		reg = <0x6a>;
 +
 +		interrupt-names = "int1", "int2";
-+		interrupts = <&gpio6 23 IRQ_TYPE_EDGE_RISING>,
-+			     <&gpio2 6 IRQ_TYPE_EDGE_RISING>;
++		interrupts-extended = <&gpio6 23 IRQ_TYPE_EDGE_RISING>,
++				      <&gpio2 6 IRQ_TYPE_EDGE_RISING>;
++		st,drdy-int-pin = <1>;
 +	};
 +};
 +
