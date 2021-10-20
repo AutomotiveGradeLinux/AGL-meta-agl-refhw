@@ -129,6 +129,9 @@ download.
     If using an AGL build with the agl-refhw-h3 feature, you can find the firmware
     files under the build directory in `tmp/deploy/images/h3ulcb`.
 
+    If you use the reference hardware numbered 100 or above,
+    please flash the firmware with the suffix "-agl-refhw-4x2g-1rank".
+
     The firmware should be stored on the eMMC as follows:
 
     | Name                                | eMMC partition | Flash address | Load address | Description
