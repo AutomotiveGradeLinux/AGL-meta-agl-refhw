@@ -28,6 +28,10 @@ EMMC_BOOT_OPTION = "RCAR_SA6_TYPE=1"
 #
 DDR_8G_OPTION = "RCAR_DRAM_LPDDR4_MEMCONF=1 RCAR_DRAM_MEMRANK=2"
 
+# AGL reference hardware numbered 100 or above has 16Gbit/1rank DRAM
+# and please flash the firmware built with the following options.
+DDR_8G_1RANK_OPTION = "RCAR_DRAM_LPDDR4_MEMCONF=1 RCAR_DRAM_MEMRANK=1"
+
 ATFW_OPT_agl-refhw-h3 = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_OPTION}"
 
 #
@@ -36,6 +40,7 @@ ATFW_OPT_agl-refhw-h3 = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_O
 
 # Build options for building as extra firmware when MACHINE=h3ulcb, based on H3[4x2g]
 H3ULCB[agl-refhw-4x2g] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_OPTION}"
+H3ULCB[agl-refhw-4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_1RANK_OPTION}"
 
 #
 # Need to prepend the compile tasks with a distclean that actually cleans
