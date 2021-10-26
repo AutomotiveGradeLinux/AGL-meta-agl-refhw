@@ -130,7 +130,7 @@ download.
     files under the build directory in `tmp/deploy/images/h3ulcb`.
 
     If you use the reference hardware numbered 100 or above,
-    please flash the firmware with the suffix "-agl-refhw-4x2g-1rank".
+    please flash the firmware with the suffix "-4x2g-1rank".
 
     The firmware should be stored on the eMMC as follows:
 
