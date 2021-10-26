@@ -42,6 +42,18 @@ ATFW_OPT_agl-refhw-h3 = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_O
 H3ULCB[agl-refhw-4x2g] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_OPTION}"
 H3ULCB[agl-refhw-4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_1RANK_OPTION}"
 
+python __anonymous() {
+    # If building for MACHINE=agl-refhw-h3, the predefined default
+    # extra configurations in the base recipe are not interesting
+    # to us, as there is no compatible hardware.
+    if d.getVar("MACHINE") == "agl-refhw-h3":
+        d.delVarFlag("H3", "2x2g")
+        d.delVarFlag("H3", "4x2g")
+}
+
+# Also build the extra 1rank firmware when MACHINE=agl-refhw-h3
+H3[4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_1RANK_OPTION}"
+
 #
 # Need to prepend the compile tasks with a distclean that actually cleans
 # out all the platform specific files like the new rcar_layout_tool output,
