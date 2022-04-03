@@ -205,11 +205,11 @@ download.
 It is also possible to build the firmware outside of the AGL build by using this
 BSP layer on top of the meta-rcar-gen3 layer in meta-renesas.
 
-1. In a temporary working directory, clone poky the poky repository and check out the dunfell branch:
+1. In a temporary working directory, clone poky the poky repository and check out the kirkstone branch:
     ```
     git clone git://git.yoctoproject.org/poky
     cd poky
-    git checkout dunfell
+    git checkout kirkstone
     ..
     ```
 2.  Clone the Renesas BSP and it's dependent layers:
@@ -220,7 +220,7 @@ BSP layer on top of the meta-rcar-gen3 layer in meta-renesas.
     cd ..
     git clone git://git.openembedded.org/meta-openembedded
     cd meta-openembedded
-    git checkout dunfell
+    git checkout kirkstone
     cd ..
     ```
 3. Clone the reference hardware BSP layer:

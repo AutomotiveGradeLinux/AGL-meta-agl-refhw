@@ -23,4 +23,4 @@ do_install() {
     oe_runmake "DEST_DIR=${D}" "BASE_LIB_DIR=${nonarch_base_libdir}" install
 }
 
-FILES_${PN} = "${nonarch_base_libdir}/firmware/ti-connectivity/*"
+FILES:${PN} = "${nonarch_base_libdir}/firmware/ti-connectivity/*"

@@ -9,16 +9,14 @@ This layer depends on:
 
   URI: git://git.openembedded.org/openembedded-core
   layers: meta
-  branch: dunfell
+  branch: kirkstone
 
   URI: git://git.openembedded.org/meta-openembedded
   layers: meta-oe, meta-python
-  branch: dunfell
+  branch: kirkstone
 
   URI: https://github.com/renesas-rcar/meta-renesas
-  branch: dunfell
-  - Note that the Renesas-Yocto-v5.5.0 tag is currently the latest revision
-    verified as compatible, it is recommended that it be used.
+  branch: kirkstone-dev_3.5_M3_v5.9.0
 
 
 Build Instructions

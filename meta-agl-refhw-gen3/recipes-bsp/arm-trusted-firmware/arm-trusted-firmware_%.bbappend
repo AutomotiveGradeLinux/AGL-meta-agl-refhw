@@ -1,16 +1,16 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRC_URI_append_rcar-gen3 = " file://0001-rcar_gen3-plat-Do-not-panic-on-unrecognized-boards.patch"
+SRC_URI:append:rcar-gen3 = " file://0001-rcar_gen3-plat-Do-not-panic-on-unrecognized-boards.patch"
 
 # Apply the patch AGL applies for all rcar3 in meta-agl-bsp when
 # building the standalone agl-refhw-h3 machine.
-SRC_URI_append_agl-refhw-h3 = " file://0001-Boot-Normal-World-in-EL2.patch"
+SRC_URI:append:agl-refhw-h3 = " file://0001-Boot-Normal-World-in-EL2.patch"
 
 # It is believed the eMMC configuration below makes the result AGL
 # reference hardware specific, mark it as such when building with
 # MACHINE=agl-refhw-h3 to potentially flag this in an incorrectly
 # configured build.
-COMPATIBLE_MACHINE_agl-refhw-h3 = "agl-refhw-h3"
+COMPATIBLE_MACHINE:agl-refhw-h3 = "agl-refhw-h3"
 
 # There are hardware issues in using hyperflash. arm-trusted-firmware, optee and
 # u-boot have to be stored into eMMC by using serial donwload.
@@ -32,7 +32,7 @@ DDR_8G_OPTION = "RCAR_DRAM_LPDDR4_MEMCONF=1 RCAR_DRAM_MEMRANK=2"
 # and please flash the firmware built with the following options.
 DDR_8G_1RANK_OPTION = "RCAR_DRAM_LPDDR4_MEMCONF=1 RCAR_DRAM_MEMRANK=1"
 
-ATFW_OPT_agl-refhw-h3 = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_OPTION}"
+ATFW_OPT:agl-refhw-h3 = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_OPTION}"
 
 #
 # Handle building as extra firmware with MACHINE=h3ulcb
@@ -62,11 +62,11 @@ H3[4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_1RANK_OP
 # upstream.
 #
 
-do_compile_prepend() {
+do_compile:prepend() {
     oe_runmake distclean PLAT=${PLATFORM} MBEDTLS_COMMON_MK=1 ${ATFW_OPT}
 }
 
-do_ipl_opt_compile_prepend() {
+do_ipl_opt_compile:prepend() {
     oe_runmake distclean PLAT=${PLATFORM} MBEDTLS_COMMON_MK=1 ${ATFW_OPT}
 }
 
