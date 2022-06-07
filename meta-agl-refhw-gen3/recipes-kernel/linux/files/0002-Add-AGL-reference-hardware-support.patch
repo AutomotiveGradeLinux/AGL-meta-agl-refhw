@@ -1,4 +1,4 @@
-From a544d23becdda2f8fb44506498c57fc46b5a075d Mon Sep 17 00:00:00 2001
+From e8df6330789b106821b9bb59177efa8a191adfda Mon Sep 17 00:00:00 2001
 From: Scott Murray <scott.murray@konsulko.com>
 Date: Tue, 21 Sep 2021 15:45:18 -0400
 Subject: [PATCH 2/4] Add AGL reference hardware support
@@ -10,19 +10,19 @@ Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>
 [asm330lhh interrupt fix]
 Signed-off-by: Hiroyuki Ishii <ishii.hiroyuki002@jp.panasonic.com>
 ---
- .../boot/dts/renesas/agl-refhw-common.dtsi    | 919 ++++++++++++++++++
+ .../boot/dts/renesas/agl-refhw-common.dtsi    | 922 ++++++++++++++++++
  .../boot/dts/renesas/r8a77951-agl-refhw.dts   | 392 ++++++++
  drivers/media/i2c/adv748x/adv748x-core.c      |  24 +-
- 3 files changed, 1334 insertions(+), 1 deletion(-)
+ 3 files changed, 1337 insertions(+), 1 deletion(-)
  create mode 100644 arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
  create mode 100644 arch/arm64/boot/dts/renesas/r8a77951-agl-refhw.dts
 
 diff --git a/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
 new file mode 100644
-index 000000000000..7474ed578c21
+index 000000000000..3f6f8d86f76d
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/agl-refhw-common.dtsi
-@@ -0,0 +1,919 @@
+@@ -0,0 +1,922 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Device Tree Source for common parts of AGL Reference Hardware board variants
@@ -74,6 +74,9 @@ index 000000000000..7474ed578c21
 +		serial4 = &hscif0;
 +		serial5 = &hscif2;
 +		ethernet0 = &avb;
++		mmc0 = &sdhi2;
++		mmc1 = &sdhi0;
++		mmc2 = &sdhi3;
 +	};
 +
 +	chosen {
@@ -1386,5 +1389,5 @@ index fe156e8f88b8..da295b106561 100644
  		if (IS_ERR(state->i2c_clients[i])) {
  			adv_err(state, "failed to create i2c client %u\n", i);
 -- 
-2.31.1
+2.35.1
 
