@@ -2,10 +2,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append:rcar-gen3 = " file://0001-rcar_gen3-plat-Do-not-panic-on-unrecognized-boards.patch"
 
-# Apply the patch AGL applies for all rcar3 in meta-agl-bsp when
-# building the standalone agl-refhw-h3 machine.
-SRC_URI:append:agl-refhw-h3 = " file://0001-Boot-Normal-World-in-EL2.patch"
-
 # It is believed the eMMC configuration below makes the result AGL
 # reference hardware specific, mark it as such when building with
 # MACHINE=agl-refhw-h3 to potentially flag this in an incorrectly
@@ -53,6 +49,10 @@ python __anonymous() {
 
 # Also build the extra 1rank firmware when MACHINE=agl-refhw-h3
 H3[4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_1RANK_OPTION}"
+
+# Boot Normal World in EL2: this define configures ATF (SPSR register) to boot
+# BL33 in EL2.
+EXTRA_OEMAKE += " RCAR_BL33_EXECUTION_EL=1"
 
 #
 # Need to prepend the compile tasks with a distclean that actually cleans
