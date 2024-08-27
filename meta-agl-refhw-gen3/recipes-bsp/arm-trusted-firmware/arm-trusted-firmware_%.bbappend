@@ -2,15 +2,20 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI:append:rcar-gen3 = " file://0001-rcar_gen3-plat-Do-not-panic-on-unrecognized-boards.patch"
 
-# It is believed the eMMC configuration below makes the result AGL
-# reference hardware specific, mark it as such when building with
+# Since it is believed the eMMC configuration below makes the result
+# AGL reference hardware specific, mark it as such when building with
 # MACHINE=agl-refhw-h3 to potentially flag this in an incorrectly
 # configured build.
 COMPATIBLE_MACHINE:agl-refhw-h3 = "agl-refhw-h3"
 
 # There are hardware issues in using hyperflash. arm-trusted-firmware, optee and
-# u-boot have to be stored into eMMC by using serial donwload.
-EMMC_BOOT_OPTION = "RCAR_SA6_TYPE=1"
+# u-boot have to be stored into eMMC by using serial download.
+# We need to specify it explicitly for the reference hardware configs when
+# building with MACHINE=h3ulcb to not break the h3ulcb builds.
+REFHW_ATFW_OPT_BOOTMODE = "RCAR_SA6_TYPE=1"
+
+# Use the existing bootmode flag with MACHINE=agl-refhw-h3
+USE_EMMC_BOOTMODE:agl-refh-h3 = "1"
 
 # RCAR_DRAM_MEMRANK must be set, since in case of RCAR_DRAM_LPDDR4_MEMCONF=1
 # ddr_rank_judge is called. But for RCAR_DRAM_MEMRANK=0 it can determine values
@@ -28,56 +33,35 @@ DDR_8G_OPTION = "RCAR_DRAM_LPDDR4_MEMCONF=1 RCAR_DRAM_MEMRANK=2"
 # and please flash the firmware built with the following options.
 DDR_8G_1RANK_OPTION = "RCAR_DRAM_LPDDR4_MEMCONF=1 RCAR_DRAM_MEMRANK=1"
 
-ATFW_OPT:agl-refhw-h3 = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_OPTION}"
-
 #
-# Handle building as extra firmware with MACHINE=h3ulcb
+# Build configurations for MACHINE=agl-refhw-h3, derived from salvator_x_r8a7795
 #
 
-# Build options for building as extra firmware when MACHINE=h3ulcb, based on H3[4x2g]
-H3ULCB[agl-refhw-4x2g] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_OPTION}"
-H3ULCB[agl-refhw-4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_1RANK_OPTION}"
+agl_refhw_h3_r8a7795[4x2g]       = "LSI=H3 RCAR_DRAM_SPLIT=1 ${ATFW_OPT_LOSSY} ${ATFW_OPT_BOOTMODE} ${DDR_8G_OPTION}"
+agl_refhw_h3_r8a7795[4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${ATFW_OPT_LOSSY} ${ATFW_OPT_BOOTMODE} ${DDR_8G_1RANK_OPTION}"
 
-python __anonymous() {
-    # If building for MACHINE=agl-refhw-h3, the predefined default
-    # extra configurations in the base recipe are not interesting
-    # to us, as there is no compatible hardware.
-    if d.getVar("MACHINE") == "agl-refhw-h3":
-        d.delVarFlag("H3", "2x2g")
-        d.delVarFlag("H3", "4x2g")
-}
+#
+# Extra configurations for building as extra firmware with MACHINE=h3ulcb
+#
 
-# Also build the extra 1rank firmware when MACHINE=agl-refhw-h3
-H3[4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${EMMC_BOOT_OPTION} ${DDR_8G_1RANK_OPTION}"
+h3ulcb_r8a7795[agl-refhw-4x2g]       = "LSI=H3 RCAR_DRAM_SPLIT=1 ${ATFW_OPT_LOSSY} ${REFHW_ATFW_OPT_BOOTMODE} ${DDR_8G_OPTION}"
+h3ulcb_r8a7795[agl-refhw-4x2g-1rank] = "LSI=H3 RCAR_DRAM_SPLIT=1 ${ATFW_OPT_LOSSY} ${REFHW_ATFW_OPT_BOOTMODE} ${DDR_8G_1RANK_OPTION}"
 
 # Boot Normal World in EL2: this define configures ATF (SPSR register) to boot
 # BL33 in EL2.
 EXTRA_OEMAKE += " RCAR_BL33_EXECUTION_EL=1"
 
-#
-# Need to prepend the compile tasks with a distclean that actually cleans
-# out all the platform specific files like the new rcar_layout_tool output,
-# otherwise they do not get rebuilt and board builds can get the wrong
-# version of e.g. cert_headers_sa6.  This needs to be addressed with
-# upstream.
-#
+# Hook to rename firmware files when building with MACHINE=h3ulcb
+# to hopefully avoid confusion.
 
-do_compile:prepend() {
-    oe_runmake distclean PLAT=${PLATFORM} MBEDTLS_COMMON_MK=1 ${ATFW_OPT}
-}
-
-do_ipl_opt_compile:prepend() {
-    oe_runmake distclean PLAT=${PLATFORM} MBEDTLS_COMMON_MK=1 ${ATFW_OPT}
-}
-
-do_extra_ipl_opt_refhw_fixup() {
+do_refhw_fixup() {
     # Rename agl-refhw-h3 firmware files to drop h3ulcb-
-    for f in ${DEPLOYDIR}/*-h3ulcb-agl-refhw-4x2g*; do
+    for f in ${S}/release/*-h3ulcb-agl-refhw-4x2g*; do
         n=`basename $f | sed 's/h3ulcb-//'`
-        mv -f $f ${DEPLOYDIR}/$n
+        mv -f $f ${S}/release/$n
     done
 }
 
-EXTRA_IPL_OPT_POSTFUNCS = ""
-EXTRA_IPL_OPT_POSTFUNCS_h3ulcb = "do_extra_ipl_opt_refhw_fixup"
-do_extra_ipl_opt[postfuncs] += "${EXTRA_IPL_OPT_POSTFUNCS}"
+DO_COMPILE_POSTFUNCS = ""
+DO_COMPILE_POSTFUNCS:h3ulcb = "do_refhw_fixup"
+do_compile[postfuncs] += "${DO_COMPILE_POSTFUNCS}"
