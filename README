@@ -9,14 +9,14 @@ This layer depends on:
 
   URI: git://git.openembedded.org/openembedded-core
   layers: meta
-  branch: kirkstone
+  branch: scarthgap
 
   URI: git://git.openembedded.org/meta-openembedded
   layers: meta-oe, meta-python
-  branch: kirkstone
+  branch: scarthgap
 
   URI: https://github.com/renesas-rcar/meta-renesas
-  branch: kirkstone-dev_3.5_M3_v5.9.0
+  branch: scarthgap-dev
 
 
 Build Instructions
