@@ -11,6 +11,7 @@ which it previously did not have, unlike the original generic
 initialize_hdmi_ih_mutes function.
 
 Author: Kato Kazuomi (加藤 一臣) <kato.kazuomi@jp.panasonic.com>
+Upstream-Status: Inappropriate [AGL-specific]
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 ---
  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +

@@ -9,8 +9,6 @@ PV = "git${SRCPV}"
 SRC_URI = "git://git.ti.com/ti-bt/service-packs.git;branch=master"
 SRCREV = "6c9104f0fb7ca1bfb663c61e9ea599b3eafbee67"
 
-S = "${WORKDIR}/git"
-
 inherit allarch
 
 CLEANBROKEN = "1"

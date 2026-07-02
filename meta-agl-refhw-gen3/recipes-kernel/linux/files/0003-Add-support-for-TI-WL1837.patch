@@ -7,6 +7,8 @@ This patch adds description of TI WL1837 and links interfaces
 to communicate with the IC.
 
 Signed-off-by: ito.yoshiki001 <ito.yoshiki001@jp.panasonic.com>
+Upstream-Status: Inappropriate [AGL-specific]
+Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 
 Reworked:
 - WL1837 specific devicetree configuration moved to the board

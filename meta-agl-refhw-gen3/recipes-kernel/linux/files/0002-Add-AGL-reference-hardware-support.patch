@@ -3,7 +3,7 @@ From: Scott Murray <scott.murray@konsulko.com>
 Date: Tue, 21 Sep 2021 15:45:18 -0400
 Subject: [PATCH 2/4] Add AGL reference hardware support
 
-Upstream-Status: pending
+Upstream-Status: Inappropriate [AGL-specific]
 
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>

@@ -7,7 +7,7 @@ Split the r8a7795 USB pin groups to create separate groups for the
 OVC pins.  This is required for the AGL reference hardware boards,
 which use some of the OVC pins in other pinmux modes.
 
-Upstream-Status: pending
+Upstream-Status: Inappropriate [AGL-specific]
 
 Signed-off-by: Scott Murray <scott.murray@konsulko.com>
 Signed-off-by: Raquel Medina <raquel.medina@konsulko.com>
